@@ -6,6 +6,7 @@ import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/flag_stripe.dart';
 import 'login_page.dart';
+import 'package:elecciones/features/actas/presentation/pages/captura_acta_page.dart';
 
 class WelcomePage extends StatelessWidget {
   final UserEntity user;
@@ -123,6 +124,28 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 48),
+
+                // Capture Acta button
+                SizedBox(
+                  height: 56,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const CapturaActaPage(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Registrar Acta de Mesa'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
                 // Logout button
                 SizedBox(
