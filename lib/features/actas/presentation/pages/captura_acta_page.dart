@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as img;
+import 'package:appwrite/appwrite.dart';
+import 'package:elecciones/injection_container.dart';
 
 class CapturaActaPage extends StatefulWidget {
   const CapturaActaPage({Key? key}) : super(key: key);
@@ -22,8 +24,18 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
   // 150.0 suele ser un buen balance para evitar fotos movidas, 
   // pero puede ajustarse según las pruebas reales con las cámaras.
   static const double blurThreshold = 150.0;
+  static const String bucketId = '6a3d5fe40013ee2986cf';
 
-  Future<void> _tomarFoto() async {
+  late final Storage _storage;
+  bool _isUploading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _storage = Storage(getIt<Client>());
+  }
+
+  Future<void> _procesarImagen(ImageSource source) async {
     setState(() {
       _isLoading = true;
       _errorMessage = null;
@@ -32,7 +44,7 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
     });
 
     try {
-      final XFile? photo = await _picker.pickImage(source: ImageSource.camera);
+      final XFile? photo = await _picker.pickImage(source: source);
       
       if (photo != null) {
         final File file = File(photo.path);
@@ -46,7 +58,7 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
             _imageFile = file;
             _isPhotoValid = true;
           } else {
-            _errorMessage = '¡La foto está muy borrosa! Vuelve a tomarla.';
+            _errorMessage = '¡La foto está muy borrosa! Vuelve a seleccionarla o tomarla de nuevo.';
           }
         });
       }
@@ -58,6 +70,40 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
       setState(() {
         _isLoading = false;
       });
+    }
+  }
+
+  Future<void> _subirActa() async {
+    if (_imageFile == null) return;
+    
+    setState(() {
+      _isUploading = true;
+    });
+
+    try {
+      final inputFile = InputFile.fromPath(path: _imageFile!.path);
+      await _storage.createFile(
+        bucketId: bucketId,
+        fileId: ID.unique(),
+        file: inputFile,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('¡Acta subida correctamente!'), backgroundColor: Colors.green),
+      );
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al subir el acta: $e'), backgroundColor: Colors.red),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+        });
+      }
     }
   }
 
@@ -161,15 +207,19 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {
-                          print('Subiendo a Appwrite...');
-                        },
+                        onPressed: _isUploading ? null : _subirActa,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                         ),
-                        child: const Text('Enviar a Central (Appwrite)', style: TextStyle(fontSize: 16)),
+                        child: _isUploading 
+                            ? const SizedBox(
+                                width: 24, 
+                                height: 24, 
+                                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                              )
+                            : const Text('Enviar a Central (Appwrite)', style: TextStyle(fontSize: 16)),
                       ),
                     ] else ...[
                       const Padding(
@@ -182,13 +232,28 @@ class _CapturaActaPageState extends State<CapturaActaPage> {
                       ),
                     ],
                     const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      onPressed: _tomarFoto,
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text('Abrir Cámara'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                      ),
+                    Wrap(
+                      spacing: 16,
+                      runSpacing: 16,
+                      alignment: WrapAlignment.center,
+                      children: [
+                        ElevatedButton.icon(
+                          onPressed: () => _procesarImagen(ImageSource.camera),
+                          icon: const Icon(Icons.camera_alt),
+                          label: const Text('Abrir Cámara'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          onPressed: () => _procesarImagen(ImageSource.gallery),
+                          icon: const Icon(Icons.photo_library),
+                          label: const Text('Subir Foto'),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

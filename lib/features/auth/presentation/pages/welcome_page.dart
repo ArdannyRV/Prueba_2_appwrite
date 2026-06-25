@@ -27,11 +27,14 @@ class WelcomePage extends StatelessWidget {
           }
         },
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(24.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(24.0),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Sello institucional
                 const FlagStripe(),
@@ -169,6 +172,8 @@ class WelcomePage extends StatelessWidget {
                   ),
                 ),
               ],
+                ),
+              ),
             ),
           ),
         ),
