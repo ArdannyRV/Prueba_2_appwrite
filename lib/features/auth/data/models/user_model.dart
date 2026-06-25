@@ -1,4 +1,4 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:appwrite/models.dart' as models;
 import '../../domain/entities/user_entity.dart';
 
 class UserModel extends UserEntity {
@@ -10,13 +10,13 @@ class UserModel extends UserEntity {
     super.createdAt,
   });
 
-  factory UserModel.fromSupabaseUser(User user) {
+  factory UserModel.fromAppwriteUser(models.User user) {
     return UserModel(
-      id: user.id,
-      email: user.email ?? '',
-      displayName: user.userMetadata?['display_name'] as String?,
-      photoUrl: user.userMetadata?['avatar_url'] as String?,
-      createdAt: DateTime.parse(user.createdAt),
+      id: user.$id,
+      email: user.email,
+      displayName: user.name.isNotEmpty ? user.name : null,
+      photoUrl: null, // Appwrite Account no maneja avatar nativo
+      createdAt: DateTime.parse(user.registration),
     );
   }
 

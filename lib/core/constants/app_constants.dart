@@ -1,9 +1,9 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AppConstants {
-  // Supabase Configuration (loaded from .env)
-  static String get supabaseUrl => dotenv.env['SUPABASE_URL'] ?? '';
-  static String get supabaseAnonKey => dotenv.env['SUPABASE_ANON_KEY'] ?? '';
+  // Appwrite Configuration (loaded from .env)
+  static String get appwriteEndpoint => dotenv.env['APPWRITE_ENDPOINT'] ?? '';
+  static String get appwriteProjectId => dotenv.env['APPWRITE_PROJECT_ID'] ?? '';
 
   // Deep Link Configuration
   static const String appScheme = 'loginpro';

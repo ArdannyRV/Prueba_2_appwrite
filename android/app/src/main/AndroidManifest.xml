@@ -34,7 +34,7 @@
                 <data android:scheme="loginpro"/>
             </intent-filter>
 
-            <!-- Supabase callback -->
+            <!-- Appwrite redirect callback -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>

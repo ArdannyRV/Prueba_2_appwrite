@@ -44,42 +44,29 @@
             <button class="button" onclick="openApp()">Ir a la aplicación</button>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@latest"></script>
     <script>
         async function verifyEmail() {
             const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-            const type = urlParams.get('type');
-            const email = urlParams.get('email');
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
 
-            if (!token || type !== 'signup' || !email) {
-                showError('Enlace de verificación inválido o incompleto. Faltan parámetros: ' + 
-                    (!token ? 'token ' : '') + (!email ? 'email' : ''));
+            if (!userId || !secret) {
+                showError('Enlace de verificación inválido o incompleto. Faltan parámetros.');
                 return;
             }
 
             try {
                 const configRes = await fetch('/api/config');
                 if (!configRes.ok) throw new Error('No se pudo obtener la configuración');
-                const { supabaseUrl, supabaseAnonKey } = await configRes.json();
+                const config = await configRes.json();
 
-                const response = await fetch(`${supabaseUrl}/auth/v1/verify`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': supabaseAnonKey,
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        token: token,
-                        type: 'signup',
-                    }),
-                });
+                const client = new Appwrite.Client()
+                    .setEndpoint(config.appwriteEndpoint)
+                    .setProject(config.appwriteProjectId);
+                const account = new Appwrite.Account(client);
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.msg || data.error_description || JSON.stringify(data));
-                }
+                await account.updateVerification(userId, secret);
 
                 showSuccess();
             } catch (error) {

@@ -12,7 +12,7 @@ export default function handler(req, res) {
 
   // Retornar solo las variables públicas 
   res.status(200).json({
-    supabaseUrl: process.env.SUPABASE_URL,
-    supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
+    appwriteEndpoint: process.env.APPWRITE_ENDPOINT,
+    appwriteProjectId: process.env.APPWRITE_PROJECT_ID,
   });
 }

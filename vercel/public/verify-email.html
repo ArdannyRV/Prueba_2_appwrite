@@ -6,38 +6,22 @@
     <title>Verificación de Email - Login Pro</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        :root {
-            --flag-yellow: #ffd100;
-            --flag-blue: #00308f;
-            --flag-red: #e30613;
-            --text-primary: #111111;
-            --text-secondary: #4a4a4a;
-            --border-color: #d9d9d9;
-        }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f4f4; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        .container { background: white; border: 1px solid var(--border-color); border-radius: 8px; padding: 0 40px 40px; max-width: 500px; width: 100%; box-shadow: 0 2px 12px rgba(0,0,0,0.06); text-align: center; overflow: hidden; }
-        .flag-stripe { display: flex; height: 5px; margin: 0 -40px 32px; }
-        .flag-stripe span { flex: 1; }
-        .flag-stripe .y { background: var(--flag-yellow); }
-        .flag-stripe .b { background: var(--flag-blue); }
-        .flag-stripe .r { background: var(--flag-red); }
-        .icon { width: 64px; height: 64px; margin: 0 auto 24px; background: white; border: 1.5px solid var(--flag-blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-        .icon.success { border-color: #1b7a3d; } .icon.error { border-color: var(--flag-red); }
-        .icon svg { width: 32px; height: 32px; }
-        h1 { color: var(--text-primary); font-size: 22px; font-weight: 700; margin-bottom: 16px; }
-        p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 28px; }
-        .button { background: var(--flag-blue); color: white; border: none; padding: 15px 32px; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.2s ease; }
-        .button:hover { background: #002470; }
-        .loader { border: 3px solid #eeeeee; border-top: 3px solid var(--flag-blue); border-radius: 50%; width: 36px; height: 36px; animation: spin 1s linear infinite; margin: 0 auto; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; padding: 48px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; }
+        .icon { width: 80px; height: 80px; margin: 0 auto 24px; background: #f0f4ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .icon.success { background: #d1f4e0; } .icon.error { background: #ffe0e0; }
+        .icon svg { width: 48px; height: 48px; }
+        h1 { color: #2d3436; font-size: 28px; margin-bottom: 16px; }
+        p { color: #636e72; font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+        .button { background: #6C5CE7; color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.3s ease; }
+        .button:hover { background: #5f4fd1; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #6C5CE7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .hidden { display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="flag-stripe">
-            <span class="y"></span><span class="b"></span><span class="r"></span>
-        </div>
         <div id="loading">
             <div class="icon"><div class="loader"></div></div>
             <h1>Verificando tu email...</h1>
@@ -45,7 +29,7 @@
         </div>
         <div id="success" class="hidden">
             <div class="icon success">
-                <svg fill="#1b7a3d" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+                <svg fill="#00D2A1" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
             </div>
             <h1>¡Email verificado!</h1>
             <p>Tu cuenta ha sido verificada correctamente. Ya puedes iniciar sesión en la aplicación.</p>
@@ -53,44 +37,36 @@
         </div>
         <div id="error" class="hidden">
             <div class="icon error">
-                <svg fill="#e30613" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+                <svg fill="#FF6B6B" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
             </div>
             <h1>Error en la verificación</h1>
             <p id="error-message">Hubo un problema al verificar tu email. El enlace puede haber expirado.</p>
             <button class="button" onclick="openApp()">Ir a la aplicación</button>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@latest"></script>
     <script>
         async function verifyEmail() {
             const urlParams = new URLSearchParams(window.location.search);
-            const token = urlParams.get('token');
-            const type = urlParams.get('type');
-            const email = urlParams.get('email');
+            const userId = urlParams.get('userId');
+            const secret = urlParams.get('secret');
 
-            if (!token || type !== 'signup' || !email) {
-                showError('Enlace de verificación inválido o incompleto');
+            if (!userId || !secret) {
+                showError('Enlace de verificación inválido o incompleto. Faltan parámetros.');
                 return;
             }
 
             try {
                 const configRes = await fetch('/api/config');
                 if (!configRes.ok) throw new Error('No se pudo obtener la configuración');
-                const { supabaseUrl, supabaseAnonKey } = await configRes.json();
+                const config = await configRes.json();
 
-                const response = await fetch(`${supabaseUrl}/auth/v1/verify`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'apikey': supabaseAnonKey,
-                    },
-                    body: JSON.stringify({ email: email, token: token, type: 'signup' }),
-                });
+                const client = new Appwrite.Client()
+                    .setEndpoint(config.appwriteEndpoint)
+                    .setProject(config.appwriteProjectId);
+                const account = new Appwrite.Account(client);
 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.msg || data.error_description || 'Token inválido o expirado');
-                }
+                await account.updateVerification(userId, secret);
 
                 showSuccess();
             } catch (error) {

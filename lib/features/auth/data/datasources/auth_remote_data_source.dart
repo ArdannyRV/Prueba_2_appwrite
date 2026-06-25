@@ -1,6 +1,9 @@
+import 'dart:async';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:appwrite/appwrite.dart';
 import '../models/user_model.dart';
+import '../../../../core/constants/app_constants.dart';
 
 abstract class AuthRemoteDataSource {
   Future<UserModel> signInWithEmailAndPassword({
@@ -27,9 +30,16 @@ abstract class AuthRemoteDataSource {
 
 @LazySingleton(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  final SupabaseClient supabaseClient;
+  final Account account;
+  final StreamController<UserModel?> _authStateController = StreamController<UserModel?>.broadcast();
 
-  AuthRemoteDataSourceImpl(this.supabaseClient);
+  AuthRemoteDataSourceImpl(this.account);
+
+  void _emitAuthState(UserModel? user) {
+    if (!_authStateController.isClosed) {
+      _authStateController.add(user);
+    }
+  }
 
   @override
   Future<UserModel> signInWithEmailAndPassword({
@@ -37,17 +47,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String password,
   }) async {
     try {
-      final response = await supabaseClient.auth.signInWithPassword(
+      await account.createEmailPasswordSession(
         email: email,
         password: password,
       );
 
-      if (response.user == null) {
-        throw Exception('No se pudo iniciar sesión');
-      }
-
-      return UserModel.fromSupabaseUser(response.user!);
-    } on AuthException catch (e) {
+      final user = await account.get();
+      final userModel = UserModel.fromAppwriteUser(user);
+      _emitAuthState(userModel);
+      return userModel;
+    } on AppwriteException catch (e) {
       throw Exception(e.message);
     } catch (e) {
       throw Exception('Error al iniciar sesión: $e');
@@ -61,18 +70,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? displayName,
   }) async {
     try {
-      final response = await supabaseClient.auth.signUp(
+      final user = await account.create(
+        userId: ID.unique(),
         email: email,
         password: password,
-        data: displayName != null ? {'display_name': displayName} : null,
+        name: displayName,
       );
 
-      if (response.user == null) {
-        throw Exception('No se pudo crear la cuenta');
-      }
+      await account.createEmailPasswordSession(
+        email: email,
+        password: password,
+      );
 
-      return UserModel.fromSupabaseUser(response.user!);
-    } on AuthException catch (e) {
+      final redirectUrl = dotenv.env['REDIRECT_URL'] ?? AppConstants.vercelBaseUrl;
+      await account.createEmailVerification(url: '$redirectUrl${AppConstants.emailVerificationPath}');
+
+      final userModel = UserModel.fromAppwriteUser(user);
+      _emitAuthState(userModel);
+      return userModel;
+    } on AppwriteException catch (e) {
       throw Exception(e.message);
     } catch (e) {
       throw Exception('Error al registrarse: $e');
@@ -84,8 +100,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     required String email,
   }) async {
     try {
-      await supabaseClient.auth.resetPasswordForEmail(email);
-    } on AuthException catch (e) {
+      final redirectUrl = dotenv.env['REDIRECT_URL'] ?? AppConstants.vercelBaseUrl;
+      await account.createRecovery(
+        email: email,
+        url: '$redirectUrl${AppConstants.resetPasswordPath}'
+      );
+    } on AppwriteException catch (e) {
       throw Exception(e.message);
     } catch (e) {
       throw Exception('Error al enviar email de recuperación: $e');
@@ -95,8 +115,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<void> signOut() async {
     try {
-      await supabaseClient.auth.signOut();
-    } on AuthException catch (e) {
+      await account.deleteSession(sessionId: 'current');
+      _emitAuthState(null);
+    } on AppwriteException catch (e) {
       throw Exception(e.message);
     } catch (e) {
       throw Exception('Error al cerrar sesión: $e');
@@ -106,20 +127,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     try {
-      final user = supabaseClient.auth.currentUser;
-      if (user == null) return null;
-      return UserModel.fromSupabaseUser(user);
+      final user = await account.get();
+      return UserModel.fromAppwriteUser(user);
+    } on AppwriteException catch (e) {
+      if (e.code == 401) {
+        return null;
+      }
+      throw Exception(e.message);
     } catch (e) {
       throw Exception('Error al obtener usuario actual: $e');
     }
   }
 
   @override
-  Stream<UserModel?> get authStateChanges {
-    return supabaseClient.auth.onAuthStateChange.map((event) {
-      final user = event.session?.user;
-      if (user == null) return null;
-      return UserModel.fromSupabaseUser(user);
-    });
-  }
+  Stream<UserModel?> get authStateChanges => _authStateController.stream;
 }
