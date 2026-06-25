@@ -35,14 +35,7 @@ class SignUpRequested extends AuthEvent {
   List<Object?> get props => [email, password, displayName];
 }
 
-class ResetPasswordRequested extends AuthEvent {
-  final String email;
 
-  const ResetPasswordRequested({required this.email});
-
-  @override
-  List<Object> get props => [email];
-}
 
 class SignOutRequested extends AuthEvent {
   const SignOutRequested();

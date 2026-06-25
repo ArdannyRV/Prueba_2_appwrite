@@ -7,7 +7,6 @@ import '../widgets/custom_text_field.dart';
 import '../widgets/flag_stripe.dart';
 import '../widgets/icon_badge.dart';
 import '../widgets/loading_overlay.dart';
-import 'email_verification_sent_page.dart';
 import 'welcome_page.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -57,13 +56,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 backgroundColor: Theme.of(context).colorScheme.error,
               ),
             );
-          } else if (state is EmailVerificationRequired) {
-            // Mostrar pantalla de verificación de email
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (_) => EmailVerificationSentPage(email: state.email),
-              ),
-            );
+
           } else if (state is AuthAuthenticated) {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
@@ -199,14 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             child: const Text('Crear cuenta'),
                           ),
                         ),
-                        const SizedBox(height: 16),
 
-                        // Info text
-                        Text(
-                          'Recibirás un correo de verificación para activar tu cuenta',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center,
-                        ),
                       ],
                     ),
                   ),

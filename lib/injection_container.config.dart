@@ -22,8 +22,6 @@ import 'package:login_pro/features/auth/domain/repositories/auth_repository.dart
     as _i638;
 import 'package:login_pro/features/auth/domain/usecases/get_current_user.dart'
     as _i496;
-import 'package:login_pro/features/auth/domain/usecases/reset_password.dart'
-    as _i1002;
 import 'package:login_pro/features/auth/domain/usecases/sign_in.dart' as _i1051;
 import 'package:login_pro/features/auth/domain/usecases/sign_out.dart' as _i427;
 import 'package:login_pro/features/auth/domain/usecases/sign_up.dart' as _i369;
@@ -51,15 +49,12 @@ extension GetItInjectableX on _i174.GetIt {
         ));
     gh.factory<_i496.GetCurrentUser>(
         () => _i496.GetCurrentUser(gh<_i638.AuthRepository>()));
-    gh.factory<_i1002.ResetPassword>(
-        () => _i1002.ResetPassword(gh<_i638.AuthRepository>()));
     gh.factory<_i1051.SignIn>(() => _i1051.SignIn(gh<_i638.AuthRepository>()));
     gh.factory<_i427.SignOut>(() => _i427.SignOut(gh<_i638.AuthRepository>()));
     gh.factory<_i369.SignUp>(() => _i369.SignUp(gh<_i638.AuthRepository>()));
     gh.factory<_i746.AuthBloc>(() => _i746.AuthBloc(
           signIn: gh<_i1051.SignIn>(),
           signUp: gh<_i369.SignUp>(),
-          resetPassword: gh<_i1002.ResetPassword>(),
           signOut: gh<_i427.SignOut>(),
           getCurrentUser: gh<_i496.GetCurrentUser>(),
         ));

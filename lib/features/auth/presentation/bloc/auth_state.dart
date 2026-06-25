@@ -38,15 +38,3 @@ class AuthError extends AuthState {
   List<Object> get props => [message];
 }
 
-class ResetPasswordSent extends AuthState {
-  const ResetPasswordSent();
-}
-
-class EmailVerificationRequired extends AuthState {
-  final String email;
-
-  const EmailVerificationRequired(this.email);
-
-  @override
-  List<Object> get props => [email];
-}

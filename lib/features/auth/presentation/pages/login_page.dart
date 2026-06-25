@@ -8,7 +8,6 @@ import '../widgets/flag_stripe.dart';
 import '../widgets/icon_badge.dart';
 import '../widgets/loading_overlay.dart';
 import 'register_page.dart';
-import 'reset_password_page.dart';
 import 'welcome_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -135,28 +134,6 @@ class _LoginPageState extends State<LoginPage> {
                           },
                         ),
                         const SizedBox(height: 8),
-
-                        // Forgot password
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (_) => const ResetPasswordPage(),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              '¿Olvidaste tu contraseña?',
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
 
                         // Login button
                         SizedBox(
