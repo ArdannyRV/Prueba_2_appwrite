@@ -1,6 +1,6 @@
 {
-    "name": "login_pro",
-    "short_name": "login_pro",
+    "name": "elecciones",
+    "short_name": "elecciones",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
