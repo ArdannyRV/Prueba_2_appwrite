@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación de Email - Login Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .container { background: white; border-radius: 20px; padding: 48px; max-width: 500px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); text-align: center; }
+        .icon { width: 80px; height: 80px; margin: 0 auto 24px; background: #f0f4ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .icon.success { background: #d1f4e0; } .icon.error { background: #ffe0e0; }
+        .icon svg { width: 48px; height: 48px; }
+        h1 { color: #2d3436; font-size: 28px; margin-bottom: 16px; }
+        p { color: #636e72; font-size: 16px; line-height: 1.6; margin-bottom: 32px; }
+        .button { background: #6C5CE7; color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; transition: background 0.3s ease; }
+        .button:hover { background: #5f4fd1; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #6C5CE7; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="loading">
+            <div class="icon"><div class="loader"></div></div>
+            <h1>Verificando tu email...</h1>
+            <p>Por favor espera mientras confirmamos tu cuenta.</p>
+        </div>
+        <div id="success" class="hidden">
+            <div class="icon success">
+                <svg fill="#00D2A1" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+            </div>
+            <h1>¡Email verificado!</h1>
+            <p>Tu cuenta ha sido verificada correctamente. Ya puedes iniciar sesión en la aplicación.</p>
+            <button class="button" onclick="openApp()">Abrir aplicación</button>
+        </div>
+        <div id="error" class="hidden">
+            <div class="icon error">
+                <svg fill="#FF6B6B" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+            </div>
+            <h1>Error en la verificación</h1>
+            <p id="error-message">Hubo un problema al verificar tu email. El enlace puede haber expirado.</p>
+            <button class="button" onclick="openApp()">Ir a la aplicación</button>
+        </div>
+    </div>
+    <script>
+        async function verifyEmail() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+            const type = urlParams.get('type');
+            const email = urlParams.get('email');
+
+            if (!token || type !== 'signup' || !email) {
+                showError('Enlace de verificación inválido o incompleto');
+                return;
+            }
+
+            try {
+                const configRes = await fetch('/api/config');
+                if (!configRes.ok) throw new Error('No se pudo obtener la configuración');
+                const { supabaseUrl, supabaseAnonKey } = await configRes.json();
+
+                const response = await fetch(`${supabaseUrl}/auth/v1/verify`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'apikey': supabaseAnonKey,
+                    },
+                    body: JSON.stringify({ email: email, token: token, type: 'signup' }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.msg || data.error_description || 'Token inválido o expirado');
+                }
+
+                showSuccess();
+            } catch (error) {
+                showError(error.message);
+            }
+        }
+
+        function showSuccess() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('success').classList.remove('hidden');
+        }
+
+        function showError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('error-message').textContent = message;
+            document.getElementById('error').classList.remove('hidden');
+        }
+
+        function openApp() {
+            window.location.href = 'loginpro://verified';
+            setTimeout(() => { alert('Por favor abre la aplicación Login Pro manualmente.'); }, 2000);
+        }
+
+        verifyEmail();
+    </script>
+</body>
+</html>

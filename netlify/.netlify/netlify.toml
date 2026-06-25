@@ -1,0 +1,65 @@
+redirectsOrigin = "config"
+plugins = []
+functionsDirectory = "C:\\Users\\APP MOVILES\\Downloads\\Semana 10\\TallerLoginVercel\\netlify\\netlify\\functions"
+functionsDirectoryOrigin = "config-v1"
+headers = []
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "C:\\Users\\APP MOVILES\\Downloads\\Semana 10\\TallerLoginVercel\\netlify\\public"
+publishOrigin = "config"
+base = "C:\\Users\\APP MOVILES\\Downloads\\Semana 10\\TallerLoginVercel\\netlify"
+functions = "C:\\Users\\APP MOVILES\\Downloads\\Semana 10\\TallerLoginVercel\\netlify\\netlify\\functions"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[redirects]]
+from = "/verify-email"
+to = "/verify-email.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/reset-password"
+to = "/reset-password.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
+from = "/api/config"
+to = "/.netlify/functions/config"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]

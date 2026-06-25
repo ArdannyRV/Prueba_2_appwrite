@@ -1,0 +1,10 @@
+{
+  "name": "login-pro-vercel",
+  "version": "1.0.0",
+  "description": "Vercel pages for email verification and password reset",
+  "scripts": {
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
