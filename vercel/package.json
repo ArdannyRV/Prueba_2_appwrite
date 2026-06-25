@@ -5,6 +5,8 @@
   "scripts": {
     "deploy": "vercel --prod"
   },
-  "dependencies": {},
+  "dependencies": {
+    "resend": "^4.0.0"
+  },
   "devDependencies": {}
 }

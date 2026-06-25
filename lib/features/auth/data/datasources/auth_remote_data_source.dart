@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:injectable/injectable.dart';
 import 'package:appwrite/appwrite.dart';
@@ -38,6 +40,39 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   void _emitAuthState(UserModel? user) {
     if (!_authStateController.isClosed) {
       _authStateController.add(user);
+    }
+  }
+
+  Future<void> _triggerResendEmail({
+    required String type,
+    required String email,
+    required String url,
+  }) async {
+    try {
+      final baseUrl = dotenv.env['REDIRECT_URL'] ?? AppConstants.vercelBaseUrl;
+      final endpoint = '$baseUrl/api/send-email';
+      
+      final httpClient = HttpClient();
+      final request = await httpClient.postUrl(Uri.parse(endpoint));
+      
+      request.headers.set('content-type', 'application/json');
+      
+      final body = jsonEncode({
+        'type': type,
+        'email': email,
+        'url': url,
+      });
+      
+      request.add(utf8.encode(body));
+      final response = await request.close();
+      
+      if (response.statusCode != 200) {
+        print('Resend webhook warning: Status ${response.statusCode}');
+      }
+      
+      httpClient.close();
+    } catch (e) {
+      print('Resend webhook error: $e');
     }
   }
 
@@ -83,7 +118,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
 
       final redirectUrl = dotenv.env['REDIRECT_URL'] ?? AppConstants.vercelBaseUrl;
-      await account.createEmailVerification(url: '$redirectUrl${AppConstants.emailVerificationPath}');
+      final verifyUrl = '$redirectUrl${AppConstants.emailVerificationPath}';
+      await account.createEmailVerification(url: verifyUrl);
+      
+      await _triggerResendEmail(
+        type: 'verification', 
+        email: email, 
+        url: verifyUrl,
+      );
 
       final userModel = UserModel.fromAppwriteUser(user);
       _emitAuthState(userModel);
@@ -101,9 +143,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }) async {
     try {
       final redirectUrl = dotenv.env['REDIRECT_URL'] ?? AppConstants.vercelBaseUrl;
+      final recoveryUrl = '$redirectUrl${AppConstants.resetPasswordPath}';
       await account.createRecovery(
         email: email,
-        url: '$redirectUrl${AppConstants.resetPasswordPath}'
+        url: recoveryUrl,
+      );
+
+      await _triggerResendEmail(
+        type: 'recovery', 
+        email: email, 
+        url: recoveryUrl,
       );
     } on AppwriteException catch (e) {
       throw Exception(e.message);
