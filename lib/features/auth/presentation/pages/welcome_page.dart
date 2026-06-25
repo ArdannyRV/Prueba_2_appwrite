@@ -4,6 +4,7 @@ import '../../domain/entities/user_entity.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
+import '../widgets/flag_stripe.dart';
 import 'login_page.dart';
 
 class WelcomePage extends StatelessWidget {
@@ -31,6 +32,10 @@ class WelcomePage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Sello institucional
+                const FlagStripe(),
+                const SizedBox(height: 32),
+
                 // Animated icon
                 TweenAnimationBuilder(
                   duration: const Duration(milliseconds: 800),
@@ -42,15 +47,19 @@ class WelcomePage extends StatelessWidget {
                     );
                   },
                   child: Container(
-                    width: 120,
-                    height: 120,
+                    width: 100,
+                    height: 100,
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
-                      shape: BoxShape.circle,
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.primary,
+                        width: 1.5,
+                      ),
                     ),
                     child: Icon(
-                      Icons.check_circle_rounded,
-                      size: 80,
+                      Icons.verified_rounded,
+                      size: 56,
                       color: Theme.of(context).colorScheme.primary,
                     ),
                   ),
@@ -91,8 +100,8 @@ class WelcomePage extends StatelessWidget {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.celebration_rounded,
-                          size: 48,
+                          Icons.task_alt_rounded,
+                          size: 40,
                           color: Theme.of(context).colorScheme.primary,
                         ),
                         const SizedBox(height: 16),

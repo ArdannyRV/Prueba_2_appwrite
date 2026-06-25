@@ -4,6 +4,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/flag_stripe.dart';
+import '../widgets/icon_badge.dart';
 import '../widgets/loading_overlay.dart';
 
 class ResetPasswordPage extends StatefulWidget {
@@ -83,11 +85,14 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Logo o icono
-                        Icon(
-                          Icons.lock_reset_rounded,
-                          size: 80,
-                          color: Theme.of(context).colorScheme.primary,
+                        // Sello institucional (acento rojo: flujo sensible de seguridad)
+                        const FlagStripe(),
+                        const SizedBox(height: 24),
+                        Center(
+                          child: IconBadge(
+                            icon: Icons.lock_reset,
+                            color: Theme.of(context).colorScheme.tertiary,
+                          ),
                         ),
                         const SizedBox(height: 24),
 

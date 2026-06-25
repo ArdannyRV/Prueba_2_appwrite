@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_theme.dart';
 
 class EmailVerificationSentPage extends StatelessWidget {
   final String email;
@@ -22,15 +23,16 @@ class EmailVerificationSentPage extends StatelessWidget {
               children: [
                 // Icono de email
                 Container(
-                  width: 120,
-                  height: 120,
+                  width: 100,
+                  height: 100,
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
-                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: theme.colorScheme.primary, width: 1.5),
                   ),
                   child: Icon(
                     Icons.mark_email_unread_rounded,
-                    size: 60,
+                    size: 48,
                     color: theme.colorScheme.primary,
                   ),
                 ),
@@ -65,7 +67,8 @@ class EmailVerificationSentPage extends StatelessWidget {
                   ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(6),
+                    border: Border.all(color: AppTheme.borderColor),
                   ),
                   child: Text(
                     email,
@@ -77,28 +80,28 @@ class EmailVerificationSentPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
 
-                // Instrucciones
+                // Instrucciones (amarillo institucional = atención, no error)
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
+                    color: AppTheme.flagYellow.withOpacity(0.12),
+                    borderRadius: BorderRadius.circular(6),
                     border: Border.all(
-                      color: Colors.amber.withOpacity(0.3),
+                      color: AppTheme.flagYellow,
                     ),
                   ),
                   child: Row(
                     children: [
                       const Icon(
                         Icons.info_outline,
-                        color: Colors.amber,
+                        color: Color(0xFF8A6D00),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           'Debes confirmar tu correo electrónico para poder iniciar sesión en la aplicación.',
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.amber.shade800,
+                            color: const Color(0xFF8A6D00),
                           ),
                         ),
                       ),
@@ -173,11 +176,11 @@ class EmailVerificationSentPage extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 32,
-          height: 32,
+          width: 28,
+          height: 28,
           decoration: BoxDecoration(
             color: theme.colorScheme.primary,
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(4),
           ),
           child: Center(
             child: Text(

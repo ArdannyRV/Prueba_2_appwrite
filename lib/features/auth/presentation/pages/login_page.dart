@@ -4,6 +4,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/flag_stripe.dart';
+import '../widgets/icon_badge.dart';
 import '../widgets/loading_overlay.dart';
 import 'register_page.dart';
 import 'reset_password_page.dart';
@@ -74,11 +76,11 @@ class _LoginPageState extends State<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Logo o icono
-                        Icon(
-                          Icons.lock_person_rounded,
-                          size: 80,
-                          color: Theme.of(context).colorScheme.primary,
+                        // Sello institucional
+                        const FlagStripe(),
+                        const SizedBox(height: 32),
+                        const Center(
+                          child: IconBadge(icon: Icons.how_to_vote),
                         ),
                         const SizedBox(height: 24),
 

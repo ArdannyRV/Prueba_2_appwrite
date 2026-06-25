@@ -4,6 +4,8 @@ import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
 import '../widgets/custom_text_field.dart';
+import '../widgets/flag_stripe.dart';
+import '../widgets/icon_badge.dart';
 import '../widgets/loading_overlay.dart';
 import 'email_verification_sent_page.dart';
 import 'welcome_page.dart';
@@ -95,11 +97,11 @@ class _RegisterPageState extends State<RegisterPage> {
                         ),
                         const SizedBox(height: 16),
 
-                        // Logo o icono
-                        Icon(
-                          Icons.person_add_rounded,
-                          size: 80,
-                          color: Theme.of(context).colorScheme.primary,
+                        // Sello institucional
+                        const FlagStripe(),
+                        const SizedBox(height: 24),
+                        const Center(
+                          child: IconBadge(icon: Icons.person_add_alt),
                         ),
                         const SizedBox(height: 24),
 
